@@ -15,6 +15,7 @@
         http_response_code(419);
         echo "Error: CSRF token mismatch";
         // var_dump($_SESSION);
+        // var_dump($_SESSION);
         die();
       }
     }
