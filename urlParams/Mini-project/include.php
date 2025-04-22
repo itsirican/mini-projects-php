@@ -25,6 +25,7 @@
   </pre>
   <form action="include.php" method="GET">
     <select name="page">
+      <option value="">Select a page</option>
       <?php foreach($pages as $key => $value): ?>
         <option value="<?php echo e($key) ?>" <?php if(!empty($_GET["page"]) && $_GET["page"] === e($key)) echo "selected" ?>><?php echo e($value) ?></option>
         <?php endforeach; ?>
@@ -37,7 +38,7 @@
     if (!empty($_GET["page"])) {
       $page = $_GET["page"];
       if (!empty($pages[$page])) {
-        include("./pages/".$_GET["page"]);
+        echo file_get_contents("./pages/".$_GET["page"]);
       }
     }
   ?>
