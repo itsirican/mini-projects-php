@@ -14,7 +14,6 @@
       $text = 'PHP is amazing';
     ?>
   </pre>
-  <!-- <h1>Hello Php</h1> -->
   <!-- <h1><?= e($text)?></h1> -->
 </body>
 </html>
