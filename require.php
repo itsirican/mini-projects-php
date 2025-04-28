@@ -8,7 +8,6 @@
 <body>
   <pre>
     <?php
-      // require_once(__DIR__."/inc/all.inc.php");
       // require_once(__DIR__."/inc/functions.inc.php");
       file_get_contents(__DIR__."/inc/functions.inc.php");
       $text = 'PHP is amazing';
