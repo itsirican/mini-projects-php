@@ -8,7 +8,7 @@
 <ul>
   <?php foreach($cities as $city):?>
     <li><a href="./city.php?<?=http_build_query(["city" => $city["city"]])?>">
-      <?=$city["city"]?>, <?=$city["country"]?> (<?=$city["flag"]?>)</a>
+      <?=e($city["city"])?>, <?=e($city["country"])?> (<?=e($city["flag"])?>)</a>
     </li>
   <?php endforeach; ?>
 </ul>
