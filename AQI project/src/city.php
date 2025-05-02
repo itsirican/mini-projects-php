@@ -66,11 +66,52 @@
 <?php if(empty($city)): ?>
   <p>The city could not be loaded.</p>
   <?php else: ?>
+    <h1>
+      <?php echo e($cityInformation["city"]) ?>
+      <?php echo e($cityInformation["flag"]) ?>
+    </h1>
     <?php if (!empty($stats)): ?>
-      <h1>
-        <?php echo e($cityInformation["city"]) ?>
-        <?php echo e($cityInformation["flag"]) ?>
-      </h1>
+      <canvas id="aqi-chart" style="width: 300px; height: 200px;"></canvas>
+      <script src="scripts/chart.umd.js"></script>
+        <?php 
+          $labels = array_keys($stats);
+          sort($labels);
+          $pm25 = [];
+          $pm10 = [];
+          foreach ($labels as $label) {
+            $mesuremenets = $stats[$label];
+            $pm25[] = array_sum($mesuremenets["pm25"]) / count($mesuremenets["pm25"]);
+            $pm10[] = array_sum($mesuremenets["pm10"]) / count($mesuremenets["pm10"]);
+          }
+          // var_dump($pm25);
+          // die();
+        ?>
+      <script>
+        const ctx = document.getElementById("aqi-chart");
+        const chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: <?php echo json_encode($labels); ?>,
+            datasets: 
+            [
+              {
+                label: <?php echo json_encode("AQI, PM2.5 in {$units['pm25']}")?>,
+                data: <?php echo json_encode($pm25); ?>,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+              },
+              {
+                label: <?php echo json_encode("AQI, PM2.5 in {$units['pm10']}")?>,
+                data: <?php echo json_encode($pm10); ?>,
+                fill: false,
+                borderColor: 'rgb(255, 75, 192)',
+                tension: 0.1
+              }
+          ]
+          }
+        });
+      </script>
       <table>
         <thead>
           <th>Month</th>
