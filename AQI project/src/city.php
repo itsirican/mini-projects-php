@@ -80,8 +80,35 @@
           $pm10 = [];
           foreach ($labels as $label) {
             $mesuremenets = $stats[$label];
-            $pm25[] = array_sum($mesuremenets["pm25"]) / count($mesuremenets["pm25"]);
-            $pm10[] = array_sum($mesuremenets["pm10"]) / count($mesuremenets["pm10"]);
+            if (count($mesuremenets["pm25"]) !== 0) {
+              $pm25[] = array_sum($mesuremenets["pm25"]) / count($mesuremenets["pm25"]);
+            } else {
+              $pm25[] = 0;
+            }
+            if (count($mesuremenets["pm10"]) !== 0) {
+              $pm10[] = array_sum($mesuremenets["pm10"]) / count($mesuremenets["pm10"]);
+            } else {
+              $pm10[] = 0;
+            }
+          }
+          $datasets = [];
+          if (array_sum($pm25)) {
+            $datasets[] = [
+              'label' => "AQI, PM2.5 in {$units['pm25']}",
+                  'data'=> $pm25,
+                  'fill'=> false,
+                  'borderColor'=> 'rgb(75, 192, 192)',
+                  'tension'=> 0.1
+            ];
+          }
+          if (array_sum($pm10)) {
+            $datasets[] = [
+              'label' => "AQI, PM10 in {$units['pm10']}",
+                  'data'=> $pm10,
+                  'fill'=> false,
+                  'borderColor'=> 'rgb(255, 75, 192)',
+                  'tension'=> 0.1
+            ];
           }
           // var_dump($pm25);
           // die();
@@ -92,23 +119,7 @@
           type: 'line',
           data: {
             labels: <?php echo json_encode($labels); ?>,
-            datasets: 
-            [
-              {
-                label: <?php echo json_encode("AQI, PM2.5 in {$units['pm25']}")?>,
-                data: <?php echo json_encode($pm25); ?>,
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-              },
-              {
-                label: <?php echo json_encode("AQI, PM2.5 in {$units['pm10']}")?>,
-                data: <?php echo json_encode($pm10); ?>,
-                fill: false,
-                borderColor: 'rgb(255, 75, 192)',
-                tension: 0.1
-              }
-          ]
+            datasets: <?php echo json_encode($datasets); ?>
           }
         });
       </script>
@@ -123,12 +134,20 @@
               <tr>
                 <th><?php echo e($month) ?></th>
                 <td>
-                  <?php echo e(round(array_sum($mesuremenets["pm25"]) / count($mesuremenets["pm25"]), 2)) ?>
-                  <?php echo e($units["pm25"]) ?>
+                  <?php if(count($mesuremenets["pm25"]) !== 0): ?>
+                    <?php echo e(round(array_sum($mesuremenets["pm25"]) / count($mesuremenets["pm25"]), 2)) ?>
+                    <?php echo e($units["pm25"]) ?>
+                    <?php else: ?>
+                      <i>No data available</i>
+                  <?php endif; ?>
                 </td>
                 <td>
-                  <?php echo e(round(array_sum($mesuremenets["pm10"]) / count($mesuremenets["pm10"]), 2)) ?>
-                  <?php echo e($units["pm10"]) ?>
+                  <?php if(count($mesuremenets["pm10"]) !== 0): ?>
+                    <?php echo e(round(array_sum($mesuremenets["pm10"]) / count($mesuremenets["pm10"]), 2)) ?>
+                    <?php echo e($units["pm10"]) ?>
+                    <?php else: ?>
+                      <i>No data available</i>
+                  <?php endif; ?>
                 </td>
               </tr>
           <?php endforeach; ?>
