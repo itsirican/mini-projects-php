@@ -1,8 +1,17 @@
 <?php
     require_once __DIR__."/inc/functions.inc.php";
     require_once __DIR__."/inc/db-connect.inc.php";
+    $perPage = 2;
+    $page = (int) ($_GET["page"] ?? 1);
 
-    $stmt = $pdo->prepare('SELECT * FROM enteries');
+    // $page = 1 => offset = 0
+    // $page = 2 => offset = perPage
+    // $page = 3 => offset = perPage * 2
+
+    $offset = ($page - 1) * $page;
+    $stmt = $pdo->prepare('SELECT * FROM enteries ORDER BY `date` DESC, `id` DESC LIMIT :perPage OFFSET :offset');
+    $stmt->bindValue("perPage", (int) $perPage, PDO::PARAM_INT);
+    $stmt->bindValue("offset", (int) $offset, PDO::PARAM_INT);
     $stmt->execute();
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
