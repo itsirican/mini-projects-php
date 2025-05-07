@@ -3,17 +3,25 @@
     require_once __DIR__."/inc/db-connect.inc.php";
     $perPage = 2;
     $page = (int) ($_GET["page"] ?? 1);
-
+    if ($page < 0) {
+        $page = 1;
+    }
     // $page = 1 => offset = 0
     // $page = 2 => offset = perPage
     // $page = 3 => offset = perPage * 2
 
-    $offset = ($page - 1) * $page;
+    $offset = ($page - 1) * $perPage;
     $stmt = $pdo->prepare('SELECT * FROM enteries ORDER BY `date` DESC, `id` DESC LIMIT :perPage OFFSET :offset');
     $stmt->bindValue("perPage", (int) $perPage, PDO::PARAM_INT);
     $stmt->bindValue("offset", (int) $offset, PDO::PARAM_INT);
     $stmt->execute();
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $stmtCount = $pdo->prepare('SELECT COUNT(*) as `count` FROM `enteries`');
+    $stmtCount->execute();
+    $count = $stmtCount->fetch()["count"];
+
+    $numPages = ceil($count / $perPage);
 ?>
 <?php require_once __DIR__."/views/header.view.php"; ?>
 <div class="nav__layout">
@@ -90,21 +98,24 @@
     </div>
 </div> -->
 
-<ul class="pagination">
-    <li class="pagination__li">
-        <a class="pagination__link" href="#">⏴</a>
-    </li>
-    <li class="pagination__li">
-        <a class="pagination__link pagination__link--active" href="#">1</a>
-    </li>
-    <li class="pagination__li">
-        <a class="pagination__link" href="#">2</a>
-    </li>
-    <li class="pagination__li">
-        <a class="pagination__link" href="#">3</a>
-    </li>
-    <li class="pagination__li">
-        <a class="pagination__link" href="#">⏵</a>
-    </li>
-</ul>
+<?php if($numPages > 1): ?>
+    <ul class="pagination">
+        <?php if ($page > 1): ?>
+            <li class="pagination__li">
+                <a class="pagination__link" href="index.php?<?php echo http_build_query(["page" => $page - 1]); ?>">⏴</a>
+            </li>
+        <?php endif; ?>
+        <?php for($x = 1; $x <= $numPages; $x++): ?>
+            <li class="pagination__li">
+                <a class="pagination__link <?php if($x === $page): ?><?php echo 'pagination__link--active' ?><?php endif; ?>" 
+                href="index.php?<?php echo http_build_query(["page" => $x]) ?>"><?php echo $x ?></a>
+            </li>
+        <?php endfor; ?>
+        <?php if($page <= $numPages - 1): ?>
+            <li class="pagination__li">
+                <a class="pagination__link" href="index.php?<?php echo http_build_query(["page" => ($page + 1)]) ?>">⏵</a>
+            </li>
+        <?php endif; ?>
+    </ul>
+<?php endif; ?>
 <?php require_once __DIR__."/views/footer.view.php"; ?>
