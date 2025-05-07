@@ -10,10 +10,42 @@
         $title = (string) ($_POST["title"] ?? '');
         $date = (string) ($_POST["date"] ?? '');
         $message = (string) ($_POST["message"] ?? '');
-        $stmt = $pdo->prepare("INSERT INTO `enteries` (`title`, `date`, `message`) VALUES (:title, :message, :date)");
+        $imageName = null;
+        if (!empty($_FILES) && !empty($_FILES["image"])) {
+            if ($_FILES["image"]["error"] === 0 && $_FILES["image"]["size"] !== 0) {
+              $fileWithoutExt = pathinfo($_FILES["image"]["name"], PATHINFO_FILENAME);
+              $name = preg_replace('/[^a-zA-Z0-9]/', '', $fileWithoutExt);
+              $originalImage = $_FILES["image"]["tmp_name"];
+              $imageName = $name."-".time().".jpg";
+              $destImage = __DIR__.'/uploads/'.$imageName;
+              // move_uploaded_file(, );
+        
+              [$width, $height] = getimagesize($originalImage);
+              $maxDims = 400;
+              $scaleFactor = $maxDims / max($width, $height);
+              $newWidth = $width * $scaleFactor;
+              $newHeight = $height * $scaleFactor;
+              // var_dump("{$newWidth}x{$newHeight}");
+            
+              $im = imagecreatefromjpeg($originalImage);
+              // var_dump($im);
+            
+              $newImage = imagecreatetruecolor($newWidth, $newHeight);
+              imagecopyresampled($newImage, $im, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+            
+              // header("Content-Type: image/jpeg");
+              // imagejpeg($newImage);
+            
+              imagejpeg($newImage, $destImage);
+            //   var_dump($imageName);
+            }
+        }
+
+        $stmt = $pdo->prepare("INSERT INTO `enteries` (`title`, `date`, `message`, `image`) VALUES (:title, :message, :date, :image)");
         $stmt->bindValue(":title", $title);
         $stmt->bindValue(":date", $date);
         $stmt->bindValue(":message", $message);
+        $stmt->bindValue(":image", $imageName);
         $stmt->execute();
         
         echo '<a href="index.php">Continue to the diary</a>';
@@ -45,7 +77,7 @@
 <div class="container">
 <h1 class="main-heading">New Entry</h1>
 
-<form method="POST" action="form.php">
+<form method="POST" action="form.php" enctype="multipart/form-data">
     <div class="form-group">
         <label class="from-group__label" for="title">Title:</label>
         <input class="from-group__input" type="text" id="title" name="title" required />
@@ -53,6 +85,10 @@
     <div class="form-group">
         <label class="from-group__label" for="date">Date:</label>
         <input class="from-group__input" type="date" id="date" name="date" required />
+    </div>
+    <div class="form-group">
+        <label class="from-group__label" for="image">Image:</label>
+        <input class="from-group__input" type="file" id="image" name="image" />
     </div>
     <div class="form-group">
         <label class="from-group__label" for="message">Message:</label>
