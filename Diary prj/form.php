@@ -25,7 +25,6 @@
               $scaleFactor = $maxDims / max($width, $height);
               $newWidth = $width * $scaleFactor;
               $newHeight = $height * $scaleFactor;
-              // var_dump("{$newWidth}x{$newHeight}");
             
               $im = imagecreatefromjpeg($originalImage);
               // var_dump($im);
