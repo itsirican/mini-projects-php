@@ -19,24 +19,28 @@
               $imageName = $name."-".time().".jpg";
               $destImage = __DIR__.'/uploads/'.$imageName;
               // move_uploaded_file(, );
-        
-              [$width, $height] = getimagesize($originalImage);
-              $maxDims = 400;
-              $scaleFactor = $maxDims / max($width, $height);
-              $newWidth = $width * $scaleFactor;
-              $newHeight = $height * $scaleFactor;
-            
-              $im = imagecreatefromjpeg($originalImage);
-              // var_dump($im);
-            
-              $newImage = imagecreatetruecolor($newWidth, $newHeight);
-              imagecopyresampled($newImage, $im, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-            
-              // header("Content-Type: image/jpeg");
-              // imagejpeg($newImage);
-            
-              imagejpeg($newImage, $destImage);
-            //   var_dump($imageName);
+              $imageSize = getimagesize($originalImage);
+              if (!empty($imageSize)) {
+                [$width, $height] = $imageSize;
+                $maxDims = 400;
+                $scaleFactor = $maxDims / max($width, $height);
+                $newWidth = $width * $scaleFactor;
+                $newHeight = $height * $scaleFactor;
+                
+                $im = imagecreatefromjpeg($originalImage);
+                if (!empty($im)) {
+                    // var_dump($im);
+                    
+                    $newImage = imagecreatetruecolor($newWidth, $newHeight);
+                    imagecopyresampled($newImage, $im, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                    
+                    // header("Content-Type: image/jpeg");
+                    // imagejpeg($newImage);
+                    
+                    imagejpeg($newImage, $destImage);
+                    //   var_dump($imageName);
+                }
+              }
             }
         }
 
