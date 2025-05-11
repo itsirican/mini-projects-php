@@ -29,8 +29,6 @@
                 
                 $im = imagecreatefromjpeg($originalImage);
                 if (!empty($im)) {
-                    // var_dump($im);
-                    
                     $newImage = imagecreatetruecolor($newWidth, $newHeight);
                     imagecopyresampled($newImage, $im, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
                     
