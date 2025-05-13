@@ -1,7 +1,10 @@
 <?php
 
+// user: names
+// pw: 9y-PTruni0SVAlKm
+
 try {
-    $pdo = new PDO('mysql:host=localhost;dbname=names;charset=utf8mb4', 'names', 'k/CG@c[@*JqNkICm', [
+    $pdo = new PDO('mysql:host=localhost;dbname=names;charset=utf8mb4', 'names', '9y-PTruni0SVAlKm', [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
 }
