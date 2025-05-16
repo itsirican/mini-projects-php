@@ -12,10 +12,19 @@
   }
   $char = strtoupper($char);
   // var_dump($char);
-  $names = fecth_names_by_initial($char);
+  $page = (int) ($_GET['page'] ?? 1);
+  $perPage = 15;
+
+  $names = fecth_names_by_initial($char, $page, $perPage);
+  $count = count_names_by_initial($char);
   // var_dump($names);
 
   render('char.view', [
     'names' => $names,
     'char' => $char,
+    'pagination' => [
+      'page' => $page,
+      'count' => $count,
+      'perPage' => $perPage
+    ]
   ]);
