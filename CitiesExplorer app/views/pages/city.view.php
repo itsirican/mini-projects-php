@@ -3,7 +3,7 @@
    * @var WorldCityModel $city
    */
 ?>
-<h1>City: <?php echo e($city->city); ?> (<?php echo e($city->country); ?>)</h1>
+<h1>City: <?php echo e($city->getCityWithCountry()); ?> </h1>
 <table>
   <tbody>
     <tr>

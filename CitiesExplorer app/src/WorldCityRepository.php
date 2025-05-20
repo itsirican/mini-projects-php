@@ -3,13 +3,8 @@
   class WorldCityRepository {
     public function __construct(private PDO $pdo){}
 
-    public function fetchById(int $id): ?WorldCityModel {
-      $stmt = $this->pdo->prepare('SELECT * FROM `worldcities` WHERE `id` = :id');
-      $stmt->bindValue(":id", $id);
-      $stmt->execute();
-      $entry = $stmt->fetch(PDO::FETCH_ASSOC);
-      if (!empty($entry)) {
-        return new WorldCityModel(
+    private function arrayToModel(array $entry): WorldCityModel {
+      return new WorldCityModel(
           $entry['id'],
           $entry['city'],
           $entry['city_ascii'],
@@ -22,6 +17,15 @@
           $entry['capital'],
           $entry['population']
         );
+    }
+
+    public function fetchById(int $id): ?WorldCityModel {
+      $stmt = $this->pdo->prepare('SELECT * FROM `worldcities` WHERE `id` = :id');
+      $stmt->bindValue(":id", $id);
+      $stmt->execute();
+      $entry = $stmt->fetch(PDO::FETCH_ASSOC);
+      if (!empty($entry)) {
+        return $this->arrayToModel($entry);
       } else {
         return null;
       }
@@ -36,19 +40,7 @@
       $models = [];
       $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
       foreach($entries as $entry) {
-        $models[] = new WorldCityModel(
-          $entry['id'],
-          $entry['city'],
-          $entry['city_ascii'],
-          (float) $entry['lat'],
-          (float) $entry['lng'],
-          $entry['country'],
-          $entry['iso2'],
-          $entry['iso3'],
-          $entry['admin_name'],
-          $entry['capital'],
-          $entry['population']
-        );
+        $models[] = $this->arrayToModel($entry);
       }
       // var_dump($entries);
 
