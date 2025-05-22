@@ -17,11 +17,11 @@ require __DIR__ . '/inc/all.inc.php';
 // $nyc->country = 'USA';
 // $nyc->population = 8000000;
 
-$entries = [
-  $budapest,
-  $berlin,
-  $nyc
-];
+// $entries = [
+//   $budapest,
+//   $berlin,
+//   $nyc
+// ];
 
 
 $worldCityRepository = new WorldCityRepository($pdo);

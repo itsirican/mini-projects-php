@@ -19,6 +19,10 @@
       <td><?php echo e($city->country); ?></td>
     </tr>
     <tr>
+      <td>Flag of the country:</td>
+      <td><?php echo e($city->getFlag()) ?></td>
+    </tr>
+    <tr>
       <th>ISO2:</th>
       <td><?php echo e($city->iso2); ?></td>
     </tr>
