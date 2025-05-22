@@ -31,10 +31,15 @@
       }
     }
 
-    public function fetch(): array {
+    public function paginate(int $page, int $perPage = 15): array {
+      // Page 0 or negative pages don't exist => showing page 1 then 
+      $page = max(1, $page);
+
       $stmt = $this->pdo->prepare('SELECT *
       -- `id`, `city`, `lat`, `lng`, `country`, `iso2`, `iso3`, `capital`, `population`
-      FROM `worldcities` ORDER BY `population` DESC LIMIT 10');
+      FROM `worldcities` ORDER BY `population` DESC LIMIT :limit OFFSET :offset');
+      $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+      $stmt->bindValue(':offset', ($page - 1) * $perPage, PDO::PARAM_INT);
       $stmt->execute();
 
       $models = [];
@@ -45,6 +50,13 @@
       // var_dump($entries);
 
       return $models;
+    }
+
+    public function count() : int {
+      $stmt = $this->pdo->prepare('SELECT COUNT(*) AS `count` FROM `worldcities`');
+      $stmt->execute();
+      $result = $stmt->fetch(PDO::FETCH_ASSOC);
+      return $result['count'];
     }
 
     // public function fetch(): array {
