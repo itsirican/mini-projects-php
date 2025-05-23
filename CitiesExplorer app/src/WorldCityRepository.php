@@ -59,6 +59,17 @@
       return $result['count'];
     }
 
+    public function update(int $id, array $properties) {
+      $stmt = $this->pdo->prepare('UPDATE `worldcities` SET `city` = :city, `city_ascii` = :cityAscii, `country` = :country, `iso2` = :iso2, `population` = :population WHERE `id` = :id');
+      $stmt->bindValue(':id', $id);
+      $stmt->bindValue(':city', $properties['city']);
+      $stmt->bindValue(':cityAscii', $properties['cityAscii']);
+      $stmt->bindValue(':country', $properties['country']);
+      $stmt->bindValue(':iso2', $properties['iso2']);
+      $stmt->bindValue(':population', $properties['population']);
+      $stmt->execute();
+    }
+
     // public function fetch(): array {
     //   var_dump($this->pdo);
     //   $budapest = new WorldCityMode();
