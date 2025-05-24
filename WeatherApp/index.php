@@ -7,6 +7,6 @@
   $fetcher = new FakeWeatherFetcher();
   $info = $fetcher->fetch('New York');
 
-  var_dump($info);
+  // var_dump($info);
 
   require __DIR__."/views/view.index.php";
