@@ -13,6 +13,18 @@
             <a href="index.php">CMS Project</a>
         </h1>
         <p>A custom-made CMS system</p>
+        <nav>
+            <?php foreach($navigation AS $navPage): ?>
+                <a 
+                    href="index.php?<?php echo http_build_query(['page' => $navPage->slug]) ?>"
+                    <?php if(!empty($page) && !empty($page->id) && $page instanceof App\Model\PageModel && $page->id === $navPage->id): ?>
+                        class="<?php echo "active"; ?>"
+                    <?php endif ?>
+                >
+                    <?php echo e($navPage->title); ?>
+                </a>
+            <?php endforeach; ?>
+        </nav>
     </header>
     <main>
         <?php echo $contents; ?>
