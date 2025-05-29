@@ -15,7 +15,7 @@
     public array $recipes = [];
 
     public function bind(string $what, \Closure $recipe) {
-      return $this->recipes[$what] = $recipe;
+      $this->recipes[$what] = $recipe;
     }
 
     public function get($what) {
@@ -24,7 +24,7 @@
           echo "Could not build {$what}";
           die();
         }
-        $this->instances[$what] = $this->recipes[$what];
+        $this->instances[$what] = $this->recipes[$what]();
       }
       return $this->instances[$what];
     }
