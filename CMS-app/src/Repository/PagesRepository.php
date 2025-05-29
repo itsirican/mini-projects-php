@@ -8,7 +8,11 @@
   class PagesRepository {
     public function __construct(private PDO $pdo) {}
 
-    public function fetchForNavigation() {
+    public function fetchForNavigation(): array {
+      return $this->get();
+    }
+
+    public function get(): array {
       $stmt = $this->pdo->prepare('SELECT * FROM `pages` ORDER BY `id` ASC');
       $stmt->execute();
       $entries = $stmt->fetchAll(PDO::FETCH_CLASS, PageModel::class);

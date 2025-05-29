@@ -22,8 +22,9 @@ $container->bind('notFoundController', function() use($container) {
   return new App\Frontend\Controller\NotFoundController($pagesRepository);
 });
 
-$container->bind('pagesAdminController', function() {
-  return new App\Admin\Controller\PagesAdminController();
+$container->bind('pagesAdminController', function() use($container) {
+  $pagesRepository = $container->get('pagesRepository');
+  return new App\Admin\Controller\PagesAdminController($pagesRepository);
 });
 
 // var_dump($page);
