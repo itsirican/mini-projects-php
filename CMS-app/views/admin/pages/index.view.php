@@ -1,4 +1,4 @@
-<h1>Admin: Manage Pages</h1>
+<h1>Admin:Manage Pages</h1>
 <table style="min-width: 100%;">
   <thead>
     <tr>
