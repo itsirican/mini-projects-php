@@ -14,18 +14,43 @@
     }
 
     public function create() {
-      var_dump($_POST);
-      $title = @(string) ($_POST['title'] ?? '');
-      $slug = @(string) ($_POST['slug'] ?? '');
-      $content = @(string) ($_POST['content'] ?? '');
+      $errors = [];
 
-      if (!empty($title) && !empty($slug) && !empty($content)) {
-        $slugExists = $this->pagesRepository->getSlugExists($slug);
-        if (empty($slugExists)) {
-          $this->pagesRepository->create($title, $slug, $content);
+      if (!empty($_POST)) {
+        $title = @(string) ($_POST['title'] ?? '');
+        $slug = @(string) ($_POST['slug'] ?? '');
+        $content = @(string) ($_POST['content'] ?? '');
+
+        $slug = strtolower($slug);
+        $slug = str_replace(['/', ' ', '.'], ['-', '-', '-'], $slug);
+        $slug = preg_replace('/[^a-z0-9\-]/', '', $slug);
+
+        if (!empty($title) && !empty($slug) && !empty($content)) {
+          $slugExists = $this->pagesRepository->getSlugExists($slug);
+          if (empty($slugExists)) {
+            $this->pagesRepository->create($title, $slug, $content);
+            header('Location: index.php?route=admin/pages');
+            return;
+          }
+          else {
+            $errors[] = 'Slug already exists!';
+          }
+        }
+        else {
+          $errors[] = 'Are all fields filled out?';
         }
       }
 
-      $this->render('pages/create', []);
+      $this->render('pages/create', [
+        'errors' => $errors
+      ]);
+    }
+
+    public function delete() {
+      $id = @(int) ($_POST['id'] ?? 0);
+      if (!empty($id)) {
+        $this->pagesRepository->delete($id);
+        header('Location: index.php?route=admin/pages');
+      }
     }
   }

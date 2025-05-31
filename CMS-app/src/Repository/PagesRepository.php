@@ -19,7 +19,7 @@
       return $entries;
     }
     
-    public function fetchBySlug($slug): ?PageModel {
+    public function fetchBySlug(string $slug): ?PageModel {
       $stmt =$this->pdo->prepare('SELECT * FROM `pages` WHERE `slug` = :slug');
       $stmt->bindValue(":slug", $slug);
       $stmt->execute();
@@ -32,7 +32,7 @@
       }
     }
 
-    public function getSlugExists($slug): bool {
+    public function getSlugExists(string $slug): bool {
       $stmt = $this->pdo->prepare('SELECT count(*) AS `count` FROM `pages` WHERE `slug` = :slug');
       $stmt->bindValue(":slug", $slug);
       $stmt->execute();
@@ -40,11 +40,17 @@
       return ($result['count'] >= 1);
     }
 
-    public function create($title, $slug, $content) {
+    public function create(string $title, string $slug, string $content) {
       $stmt = $this->pdo->prepare('INSERT INTO `pages` (`title`, `slug`, `content`) VALUES(:title, :slug, :content)');
       $stmt->bindValue(":title", $title);
       $stmt->bindValue(":slug", $slug);
       $stmt->bindValue(":content", $content);
+      $stmt->execute();
+    }
+
+    public function delete(int $id) {
+      $stmt = $this->pdo->prepare('DELETE FROM `pages` WHERE `id`= :id');
+      $stmt->bindValue(":id", $id, PDO::PARAM_INT);
       $stmt->execute();
     }
 
