@@ -11,7 +11,7 @@
 <body>
     <header>
         <h1>
-            <a href="index.php">CMS: Admin</a>
+            <a href="index.php?route=admin/pages">CMS: Admin</a>
         </h1>
         <p>An amazing admin area!</p>
         <nav>

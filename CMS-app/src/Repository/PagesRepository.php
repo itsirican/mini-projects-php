@@ -32,4 +32,20 @@
       }
     }
 
+    public function getSlugExists($slug): bool {
+      $stmt = $this->pdo->prepare('SELECT count(*) AS `count` FROM `pages` WHERE `slug` = :slug');
+      $stmt->bindValue(":slug", $slug);
+      $stmt->execute();
+      $result = $stmt->fetch(PDO::FETCH_ASSOC);
+      return ($result['count'] >= 1);
+    }
+
+    public function create($title, $slug, $content) {
+      $stmt = $this->pdo->prepare('INSERT INTO `pages` (`title`, `slug`, `content`) VALUES(:title, :slug, :content)');
+      $stmt->bindValue(":title", $title);
+      $stmt->bindValue(":slug", $slug);
+      $stmt->bindValue(":content", $content);
+      $stmt->execute();
+    }
+
   }
