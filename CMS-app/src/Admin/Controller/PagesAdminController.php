@@ -53,4 +53,29 @@
         header('Location: index.php?route=admin/pages');
       }
     }
+
+    public function edit() {
+      $errors = [];
+      $id = @(int) ($_GET['id'] ?? 0);
+
+      if (!empty($_POST)) {
+        $title = @(string) ($_POST['title'] ?? '');
+        $content = @(string) ($_POST['content'] ?? '');
+
+        if (!empty($title) && !empty($content)) {
+          $this->pagesRepository->updateTitleAndContent($id, $title, $content);
+          header('Location: index.php?route=admin/pages');
+          return;
+        } else {
+          $errors[] = 'Please make sure that both input fields are filled out';
+        }
+      }
+
+      $page = $this->pagesRepository->fetchById($id);
+
+      $this->render('pages/edit', [
+        'page' => $page,
+        'errors' => $errors
+      ]);
+    }
   }

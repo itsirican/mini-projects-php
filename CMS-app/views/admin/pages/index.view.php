@@ -13,9 +13,11 @@
         <td><?php echo e($page->id); ?></td>
         <td><?php echo e($page->title); ?></td>
         <td>
-          <form action="index.php?<?php echo http_build_query(['route' => 'admin/pages/delete', 'id' => $page->id]) ?>" method="POST">
+          <!-- <a href="#">View</a> -->
+          <a href="index.php?<?php echo http_build_query(['route' => 'admin/pages/edit', 'id' => $page->id]); ?>">Edit</a>
+          <form style="display: inline;" action="index.php?<?php echo http_build_query(['route' => 'admin/pages/delete', 'id' => $page->id]) ?>" method="POST">
             <input type="hidden" name="id" value="<?php echo e($page->id); ?>">
-            <input type="submit" value="Delete!">
+            <input type="submit" value="Delete!" class="btn-link" >
           </form>
           <?php /*
             <a href="index.php?<?php echo http_build_query(['route' => 'admin/pages/delete', 'id' => $page->id]) ?>">

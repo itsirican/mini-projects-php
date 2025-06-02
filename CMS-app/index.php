@@ -42,6 +42,9 @@ if ($route === 'pages') {
 } else if ($route === 'admin/pages/create') {
   $pagesAdminController = $container->get('pagesAdminController');
   $pagesAdminController->create();
+} else if ($route === 'admin/pages/edit') {
+  $pagesAdminController = $container->get('pagesAdminController');
+  $pagesAdminController->edit();
 } else if ($route === 'admin/pages/delete') {
   $pagesAdminController = $container->get('pagesAdminController');
   $pagesAdminController->delete();
