@@ -10,7 +10,7 @@
       if (empty($username)) return false;
       if(empty($username)) return false;
       
-      $stmt = $this->pdo->prepare('SELECT `password` FROM `users` WHERE `username` = :username');
+      $stmt = $this->pdo->prepare('SELECT `id`, `password` FROM `users` WHERE `username` = :username');
       $stmt->bindValue(":username", $username);
       $stmt->execute();
       $entry = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -23,6 +23,24 @@
       if (empty($passwordOk)) {
         return false;
       }
+
+      session_start();
+      $_SESSION['adminUserId'] = $entry['id'];
+      session_regenerate_id();
+
       return true;
+    }
+
+    public function isLoggedIn():bool {
+      session_start();
+      return !empty($_SESSION['adminUserId']);
+    }
+
+    public function ensureLoggedIn() {
+      $isLoggedIn = $this->isLoggedIn();
+      if (empty($isLoggedIn)) {
+        header('Location: index.php?'.http_build_query(['route' => 'admin/login']));
+        die();
+      }
     }
   }

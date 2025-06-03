@@ -11,6 +11,12 @@
     }
 
     public function login() {
+
+      if ($this->authService->isLoggedIn()) {
+        header('Location: index.php?'.http_build_query(['route' => 'admin/pages']));
+        return;
+      }
+
       $loginError = false;
       // var_dump("LoginController::login() has been called!");
       // var_dump($_POST);

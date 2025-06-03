@@ -50,15 +50,27 @@ if ($route === 'pages') {
   $loginController = $container->get('loginController');
   $loginController->login();
 } else if ($route === 'admin/pages') {
+  $authService = $container->get('authService');
+  $authService->ensureLoggedIn();
+
   $pagesAdminController = $container->get('pagesAdminController');
   $pagesAdminController->index();
 } else if ($route === 'admin/pages/create') {
+  $authService = $container->get('authService');
+  $authService->ensureLoggedIn();
+
   $pagesAdminController = $container->get('pagesAdminController');
   $pagesAdminController->create();
 } else if ($route === 'admin/pages/edit') {
+  $authService = $container->get('authService');
+  $authService->ensureLoggedIn();
+
   $pagesAdminController = $container->get('pagesAdminController');
   $pagesAdminController->edit();
 } else if ($route === 'admin/pages/delete') {
+  $authService = $container->get('authService');
+  $authService->ensureLoggedIn();
+
   $pagesAdminController = $container->get('pagesAdminController');
   $pagesAdminController->delete();
 } else {
