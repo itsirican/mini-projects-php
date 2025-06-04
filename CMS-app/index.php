@@ -38,6 +38,15 @@ $container->bind('loginController', function() use($container) {
   return new App\Admin\Controller\LoginController($authService);
 });
 
+$container->bind('csrfHelper', function() {
+  return new App\Support\CsrfHelper();
+});
+
+$csrfHelper = $container->get('csrfHelper');
+$csrfHelper->handle();
+
+var_dump($csrfHelper->generateToken());
+
 // var_dump($page);
 
 $route = @(string) ($_GET['route'] ?? 'pages');
