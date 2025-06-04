@@ -45,7 +45,12 @@ $container->bind('csrfHelper', function() {
 $csrfHelper = $container->get('csrfHelper');
 $csrfHelper->handle();
 
-var_dump($csrfHelper->generateToken());
+// var_dump($csrfHelper->generateToken());
+function csrf_token() {
+  global $container;
+  $csrfHelper = $container->get('csrfHelper');
+  return $csrfHelper->generateToken();
+}
 
 // var_dump($page);
 
