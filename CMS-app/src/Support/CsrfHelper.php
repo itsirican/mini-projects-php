@@ -18,7 +18,6 @@
         // var_dump($_SESSION);
         die();
       }
-      // var_dump("CsrfHelper::handle has been called");
     }
 
     private function ensureSession() {
