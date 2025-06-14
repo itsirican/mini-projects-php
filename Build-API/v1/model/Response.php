@@ -40,15 +40,15 @@
       if (($this->_success !== true && $this->_success !== false) || !is_numeric($this->_httpStatusCode)) {
         http_response_code(500);
 
-        $this->_responseData['success'] = false;
         $this->_responseData['httpStatusCode'] = 500;
+        $this->_responseData['success'] = false;
         $this->addMessage("Error: server error 500");
         $this->_responseData['messages'] = $this->_messages;
       } else {
         http_response_code($this->_httpStatusCode);
 
-        $this->_responseData['success'] = $this->_success;
         $this->_responseData['httpStatusCode'] = $this->_httpStatusCode;
+        $this->_responseData['success'] = $this->_success;
         $this->_responseData['messages'] = $this->_messages;
         $this->_responseData['data'] = $this->_data;
       }
