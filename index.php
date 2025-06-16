@@ -25,7 +25,7 @@
   // if (date_format($date, "d/m/Y H:i") != "24-01-2005 12:00") {
   //   echo "done!";
   // }
-  // $deadline = "24/01/2005 12:00";
-  // if ($deadline !== null && date_format(date_create_from_format("d/m/Y H:i", $deadline), 'd/m/Y H:i') != $deadline) {
-  //   echo "error";
-  // }
+  $deadline = "24/01/2005 12:00";
+  if ($deadline !== null && date_format(date_create_from_format("d/m/Y H:i", $deadline), 'd/m/Y H:i') != $deadline) {
+    echo "error";
+  }
