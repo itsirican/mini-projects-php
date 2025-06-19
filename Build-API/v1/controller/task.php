@@ -81,6 +81,39 @@
       }
     } else if ($_SERVER["REQUEST_METHOD"] === "DELETE") {
 
+      try {
+
+        $query = $writeDB->prepare('delete from tbltasks where id = :taskid');
+        $query->bindParam(":taskid", $taskid, PDO::PARAM_INT);
+        $query->execute();
+
+        $rowsCount = $query->rowCount();
+
+        if ($rowsCount === 0) {
+          $response = new Response();
+          $response->setHttpStatusCode(404);
+          $response->setSuccess(false);
+          $response->addMessage("Task not found");
+          $response->send();
+          exit;
+        }
+
+        $response = new Response();
+        $response->setHttpStatusCode(200);
+        $response->setSuccess(true);
+        $response->addMessage("Task deleted successfully!");
+        $response->send();
+        exit;
+
+      } catch (PDOException $ex) {
+        $response = new Response();
+        $response->setHttpStatusCode(500);
+        $response->setSuccess(false);
+        $response->addMessage("Failed delete task");
+        $response->send();
+        exit;
+      }
+
     } else if ($_SERVER["REQUEST_METHOD"] === "PATCH") {
 
     } else {
