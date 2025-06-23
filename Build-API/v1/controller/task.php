@@ -198,6 +198,70 @@
       $response->send();
       exit;
     }
+  } else if (array_key_exists("page", $_GET)) {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+      $page = $_GET['page'];
+
+      if ($page == '' || !is_numeric($page)) {
+        $response = new Response();
+        $response->setHttpStatusCode(400);
+        $response->setSuccess(false);
+        $response->addMessage("Page number cannot be blank and must be numeric");
+        $response->send();
+        exit;
+      }
+
+      $limitPerPage = 20;
+
+      try {
+
+        $query = $readDB->prepare('select count(id) as totalNoOfTasks from tbltasks');
+        $query->execute();
+
+        $row = $query->fetch(PDO::FETCH_ASSOC);
+
+        $tasksCount = intval($row['totalNoOfTasks']);
+
+        $numOfPages = ceil($tasksCount/$limitPerPage);
+
+        if ($numOfPages == 0) {
+          $numOfPages = 1;
+        }
+
+        if ($page > $numOfPages || $page == 0) {
+          $response = new Response();
+          $response->setHttpStatusCode(404);
+          $response->setSuccess(false);
+          $response->addMessage("Page not found");
+          $response->send();
+          exit;
+        }
+
+      } catch (TaskException $ex) {
+        $response = new Response();
+        $response->setHttpStatusCode(500);
+        $response->setSuccess(false);
+        $response->addMessage($ex->getMessage());
+        $response->send();
+        exit;
+      } catch (PDOException $ex) {
+        error_log("Database query error - ".$ex, 0);
+        $response = new Response();
+        $response->setHttpStatusCode(500);
+        $response->setSuccess(false);
+        $response->addMessage("Failed to get tasks");
+        $response->send();
+        exit;
+      }
+
+    } else {
+      $response = new Response();
+      $response->setHttpStatusCode(405);
+      $response->setSuccess(false);
+      $response->addMessage("Request method not allowed");
+      $response->send();
+      exit;
+    }
   } else if (empty($_GET)) {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       try {
