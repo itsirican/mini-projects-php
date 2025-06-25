@@ -211,7 +211,7 @@
         exit;
       }
 
-      $limitPerPage = 20;
+      $limitPerPage = 3;
 
       try {
 
@@ -236,6 +236,39 @@
           $response->send();
           exit;
         }
+
+        $offset = ($page == 1 ? 0 : ($limitPerPage * ($page - 1)));
+
+        $query = $readDB->prepare('select id, title, description, DATE_FORMAT(deadline, "%d/%m/%Y %H:%i") as deadline, completed from tbltasks limit :pglimit offset :offset');
+        $query->bindParam("pglimit", $limitPerPage, PDO::PARAM_INT);
+        $query->bindParam("offset", $offset, PDO::PARAM_INT);
+        $query->execute();
+
+        $rowCount = $query->rowCount();
+
+        $taskArray = array();
+
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+          $task = new Task($row['id'], $row['title'], $row['description'], $row['deadline'], $row['completed']);
+
+          $taskArray[] = $task->returnTaskAsArray();
+        }
+
+        $returnData = array();
+        $returnData['rows_returned'] = $rowCount;
+        $returnData['total_rows'] = $tasksCount;
+        $returnData['total_pages'] = $numOfPages;
+        ($page < $numOfPages ? $returnData['has_next_page'] = true : $returnData['has_next_page'] = false);
+        ($page > 1 ? $returnData['has_previous_page'] = true : $returnData['has_previous_page'] = false);
+        $returnData['tasks'] = $taskArray;
+
+        $response = new Response();
+        $response->setHttpStatusCode(200);
+        $response->setSuccess(true);
+        $response->toCache(true);
+        $response->setData($returnData);
+        $response->send();
+        exit;
 
       } catch (TaskException $ex) {
         $response = new Response();
