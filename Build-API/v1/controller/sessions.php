@@ -16,6 +16,78 @@
   }
 
   if (array_key_exists("sessionid", $_GET)) {
+    $sessionid = $_GET['sessionid'];
+
+    if ($sessionid === '' || !is_numeric($sessionid)) {
+      $response = new Response();
+      $response->setHttpStatusCode(400);
+      $response->setSuccess(false);
+      ($sessionid === '' ? $response->addMessage("Session ID cannot be blank") : false);
+      (!is_numeric($sessionid) ? $response->addMessage("Session ID must be numeric") : false);
+      $response->send();
+      exit;
+    }
+
+  if (!isset($_SERVER['HTTP_AUTHORIZATION']) || strlen($_SERVER['HTTP_AUTHORIZATION']) < 1) {
+    $response = new Response();
+    $response->setHttpStatusCode(401);
+    $response->setSuccess(false);
+    (!isset($_SERVER['HTTP_AUTHORIZATION']) ? $response->addMessage("Access token is missing from the header") : false);
+    (strlen($_SERVER['HTTP_AUTHORIZATION']) < 1 ? $response->addMessage("Access token cannot be blank") : false);
+    $response->send();
+    exit;
+  }
+
+  $accesstoken = $_SERVER['HTTP_AUTHORIZATION'];
+
+  if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+
+    try {
+      $query = $writeDB->prepare('delete from tblsessions where id = :sessionid and accesstoken = :accesstoken');
+      $query->bindParam(":sessionid", $sessionid);
+      $query->bindParam(":accesstoken", $accesstoken);
+      $query->execute();
+
+      $rowCount = $query->rowCount();
+
+      if ($rowCount === 0) {
+        $response = new Response();
+        $response->setHttpStatusCode(400);
+        $response->setSuccess(false);
+        $response->addMessage("Failed to log out of this session using access token provided");
+        $response->send();
+        exit;
+      }
+
+      $returnData = array();
+      $returnData['session_id'] = intval($sessionid);
+
+      $response = new Response();
+      $response->setHttpStatusCode(200);
+      $response->setSuccess(false);
+      $response->addMessage("Logged out");
+      $response->send();
+      exit;
+
+    } catch (PDOException $ex) {
+      $response = new Response();
+      $response->setHttpStatusCode(500);
+      $response->setSuccess(false);
+      $response->addMessage("There was an issue loggin out - please try again");
+      $response->send();
+      exit;
+    }
+
+  } else if ($_SERVER['REQUEST_METHOD'] === 'PATCH') {
+
+  } else {
+    $response = new Response();
+    $response->setHttpStatusCode(405);
+    $response->setSuccess(false);
+    $response->addMessage("Request method not allowed");
+    $response->send();
+    exit;
+  }
 
   } else if (empty($_GET)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -76,12 +148,11 @@
       $username = $jsonData->username;
       $password = $jsonData->password;
 
-      $query = $writeDB->prepare('select id, fullname, username, password, useractive, logginattempts from tblusers where username = :username');
+      $query = $writeDB->prepare('select id, fullname, username, password, useractive, loginattempts from tblusers where username = :username');
       $query->bindParam(":username", $username);
       $query->execute();
 
       $rowCount = $query->rowCount();
-
       if ($rowCount === 0) {
         $response = new Response();
         $response->setHttpStatusCode(401);
@@ -92,13 +163,13 @@
       }
 
       $row = $query->fetch(PDO::FETCH_ASSOC);
-
+      
       $returned_id = $row['id'];
       $returned_fullname = $row['fullname'];
       $returned_username = $row['username'];
       $returned_password = $row['password'];
       $returned_useractive = $row['useractive'];
-      $returned_logginattempts = $row['logginattempts'];
+      $returned_loginattempts = $row['loginattempts'];
 
       if ($returned_useractive !== 'Y') {
         $response = new Response();
@@ -109,7 +180,7 @@
         exit;
       }
 
-      if ($returned_logginattempts >= 3) {
+      if ($returned_loginattempts >= 3) {
         $response = new Response();
         $response->setHttpStatusCode(401);
         $response->setSuccess(false);
@@ -119,7 +190,7 @@
       }
 
       if (!password_verify($password, $returned_password)) {
-        $query = $writeDB->prepare('update tlbusers set logginattempts = logginattempts+1 where id = :id');
+        $query = $writeDB->prepare('update tblusers set loginattempts = loginattempts+1 where id = :id');
         $query->bindParam(":id", $returned_id, PDO::PARAM_INT);
         $query->execute();
 
@@ -148,7 +219,7 @@
     try {
       $writeDB->beginTransaction();
 
-      $query = $writeDB->prepare('update tblusers set logginattempts = 0 where id = :id');
+      $query = $writeDB->prepare('update tblusers set loginattempts = 0 where id = :id');
       $query->bindParam(":id", $returned_id, PDO::PARAM_INT);
       $query->execute();
 
