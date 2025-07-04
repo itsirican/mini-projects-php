@@ -66,6 +66,7 @@
       $response->setHttpStatusCode(200);
       $response->setSuccess(false);
       $response->addMessage("Logged out");
+      $response->setData($returnData);
       $response->send();
       exit;
 
