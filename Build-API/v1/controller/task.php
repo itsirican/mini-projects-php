@@ -17,6 +17,23 @@
     exit();
   }
 
+
+  // begin auth script
+  if (!isset($_SERVER['HTTP_AUTHORIZATION']) || strlen($_SERVER['HTTP_AUTHORIZATION']) < 1) {
+    $response = new Response();
+    $response->setHttpStatusCode(401);
+    $response->setSuccess(false);
+    (!isset($_SERVER['HTTP_AUTHORIZATION']) ? $response->addMessage("Access token is missing from the header") : false);
+    (strlen($_SERVER['HTTP_AUTHORIZATION']) < 1 ? $response->addMessage("Access token cannot be blank") : false);
+    $response->send();
+    exit;
+  }
+
+
+  // end auth script
+
+
+
   if (array_key_exists("taskid", $_GET)) {
     $taskid = $_GET["taskid"];
     if ($taskid == '' || !is_numeric($taskid)) {
