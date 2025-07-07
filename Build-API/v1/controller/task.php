@@ -552,16 +552,6 @@
 
         $rowCount = $query->rowCount();
         
-        if ($rowCount === 0) {
-          $response = new Response();
-          $response->setHttpStatusCode(404);
-          $response->setSuccess(false);
-          $response->addMessage("Tasks not found");
-          $response->setData([]);
-          $response->send();
-          exit;
-        }
-
         $tasksArray = array();
 
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
