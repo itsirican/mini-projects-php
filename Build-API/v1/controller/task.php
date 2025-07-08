@@ -551,7 +551,7 @@
         $query->execute();
 
         $rowCount = $query->rowCount();
-        
+
         $tasksArray = array();
 
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
